@@ -3,27 +3,34 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import text
+from email.message import EmailMessage
 import boto3
 import smtplib
-from email.message import EmailMessage
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secure-key-here'  # Replace with a secure key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pickles.db'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
 # AWS Config
-sns = boto3.client('sns', region_name='ap-south-1')
-dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
-SNS_TOPIC_ARN = 'arn:aws:sns:ap-south-1:123456789012:OrderAlerts'
+AWS_REGION = os.getenv('AWS_REGION')
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
+sns = boto3.client('sns', region_name=AWS_REGION)
+dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
 users_table = dynamodb.Table('Users')
 orders_table = dynamodb.Table('Orders')
+products_table = dynamodb.Table('Products')
+cart_table = dynamodb.Table('Cart')
 
 # Email Config
-EMAIL_ADDRESS = 'priyankakaki7997@gmail.com'
-EMAIL_PASSWORD = 'znsq vwkt gjlw zijw  # Use Gmail App Password
+EMAIL_ADDRESS = os.getenv('228x1a12402@khitguntur.ac.in')
+EMAIL_PASSWORD = os.getenv('znsq vwkt gjlw zijw')
 
 # Helper Functions
 def send_email(subject, body, to):
@@ -184,7 +191,7 @@ def checkout():
 
     return render_template('checkout.html', cart_items=cart_items, total=total)
 
-# More routes like login, register, cart, product, orders etc. would be defined here
+# Placeholder: define other routes like login, register, cart, orders...
 
-if name == '__main__':
- app.run(debug=True, host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

@@ -186,5 +186,5 @@ def checkout():
 
 # More routes like login, register, cart, product, orders etc. would be defined here
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if name == '__main__':
+ app.run(debug=True, host='0.0.0.0', port=5000)
